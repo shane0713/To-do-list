@@ -168,58 +168,20 @@
                     <input type="text" id="task-title" required placeholder="例如：每週週報彙整" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
                 </div>
 
-                <!-- 預計到期日與 24 小時制整點 -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">預計到期日 *</label>
-                        <input type="date" id="task-date" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">預計時間 (24時制) *</label>
-                        <select id="task-hour" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
-                            <option value="00:00">00 時</option>
-                            <option value="01:00">01 時</option>
-                            <option value="02:00">02 時</option>
-                            <option value="03:00">03 時</option>
-                            <option value="04:00">04 時</option>
-                            <option value="05:00">05 時</option>
-                            <option value="06:00">06 時</option>
-                            <option value="07:00">07 時</option>
-                            <option value="08:00">08 時</option>
-                            <option value="09:00">09 時</option>
-                            <option value="10:00" selected>10 時</option>
-                            <option value="11:00">11 時</option>
-                            <option value="12:00">12 時</option>
-                            <option value="13:00">13 時</option>
-                            <option value="14:00">14 時</option>
-                            <option value="15:00">15 時</option>
-                            <option value="16:00">16 時</option>
-                            <option value="17:00">17 時</option>
-                            <option value="18:00">18 時</option>
-                            <option value="19:00">19 時</option>
-                            <option value="20:00">20 時</option>
-                            <option value="21:00">21 時</option>
-                            <option value="22:00">22 時</option>
-                            <option value="23:00">23 時</option>
-                        </select>
-                    </div>
+                <!-- 重複週期移至上方 -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">重複週期</label>
+                    <select id="task-recurring" onchange="toggleRecurringMode()" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                        <option value="none">不重複</option>
+                        <option value="daily">每天重複</option>
+                        <option value="weekly">每週重複</option>
+                        <option value="monthly">每月重複</option>
+                    </select>
                 </div>
 
-                <!-- 重複週期 (左) 與 重複截止日期 (右) -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">重複週期</label>
-                        <select id="task-recurring" onchange="toggleRecurringEndInput()" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
-                            <option value="none">不重複</option>
-                            <option value="daily">每天重複</option>
-                            <option value="weekly">每週重複</option>
-                            <option value="monthly">每月重複</option>
-                        </select>
-                    </div>
-                    <div id="recurring-end-container" class="hidden">
-                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">重複截止日期</label>
-                        <input type="date" id="task-recurring-end" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
-                    </div>
+                <!-- 依重複週期動態切換：非重複顯示一般預計日期時間；有重複顯示開始與結束 -->
+                <div id="date-time-container" class="space-y-3">
+                    <!-- 動態填入 -->
                 </div>
 
                 <!-- 優先程度 -->
@@ -300,7 +262,7 @@
                 <button type="submit" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-lg transition shadow-sm">新增</button>
             </form>
 
-            <!-- 現有標籤列表（可編輯與刪除） -->
+            <!-- 現有標籤列表（可編輯名稱與顏色、刪除） -->
             <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="category-list-container">
                 <!-- 動態填充 -->
             </div>
@@ -340,8 +302,8 @@
         ];
 
         let tasks = JSON.parse(localStorage.getItem('taskflow_tasks')) || [
-            { id: '1', title: '完成專案報告草稿', date: getTodayDateString(), time: '17:00', priority: 'high', category1: 'work', category2: 'project_a', recurring: 'none', recurringEnd: '', notes: '確認數據與圖表細節', completed: false },
-            { id: '2', title: '每週部門進度會議記錄', date: getTodayDateString(), time: '10:00', priority: 'medium', category1: 'work', category2: 'routine', recurring: 'weekly', recurringEnd: '', notes: '記得整理 Action Items', completed: false }
+            { id: '1', title: '完成專案報告草稿', date: getTodayDateString(), time: '17:00', priority: 'high', category1: 'work', category2: 'project_a', recurring: 'none', startDate: '', startTime: '', endDate: '', endTime: '', notes: '確認數據與圖表細節', completed: false },
+            { id: '2', title: '每週部門進度會議記錄', date: getTodayDateString(), time: '10:00', priority: 'medium', category1: 'work', category2: 'routine', recurring: 'weekly', startDate: getTodayDateString(), startTime: '10:00', endDate: '2026-12-31', endTime: '10:00', notes: '記得整理 Action Items', completed: false }
         ];
 
         let currentTab = 'today';
@@ -350,6 +312,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             updateCategoryDropdowns();
             renderTasks();
+            toggleRecurringMode();
         });
 
         function saveData() {
@@ -403,14 +366,70 @@
             }
         }
 
-        function toggleRecurringEndInput() {
+        const hourOptionsHtml = `
+            <option value="00:00">00 時</option><option value="01:00">01 時</option><option value="02:00">02 時</option>
+            <option value="03:00">03 時</option><option value="04:00">04 時</option><option value="05:00">05 時</option>
+            <option value="06:00">06 時</option><option value="07:00">07 時</option><option value="08:00">08 時</option>
+            <option value="09:00">09 時</option><option value="10:00" selected>10 時</option><option value="11:00">11 時</option>
+            <option value="12:00">12 時</option><option value="13:00">13 時</option><option value="14:00">14 時</option>
+            <option value="15:00">15 時</option><option value="16:00">16 時</option><option value="17:00">17 時</option>
+            <option value="18:00">18 時</option><option value="19:00">19 時</option><option value="20:00">20 時</option>
+            <option value="21:00">21 時</option><option value="22:00">22 時</option><option value="23:00">23 時</option>
+        `;
+
+        function toggleRecurringMode() {
             const recurringVal = document.getElementById('task-recurring').value;
-            const container = document.getElementById('recurring-end-container');
-            if (recurringVal !== 'none') {
-                container.classList.remove('hidden');
+            const container = document.getElementById('date-time-container');
+
+            if (recurringVal === 'none') {
+                container.innerHTML = `
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">預計到期日 *</label>
+                            <input type="date" id="task-date" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">預計時間 (24時制) *</label>
+                            <select id="task-hour" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                                ${hourOptionsHtml}
+                            </select>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('task-date').value = getTodayDateString();
             } else {
-                container.classList.add('hidden');
-                document.getElementById('task-recurring-end').value = '';
+                container.innerHTML = `
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+                        <div class="text-xs font-bold text-slate-900 flex items-center"><i class="fa-solid fa-calendar-days mr-1.5"></i>重複週期區間設定</div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">開始日期 *</label>
+                                <input type="date" id="task-start-date" required class="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-slate-900">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">開始時間 *</label>
+                                <select id="task-start-hour" required class="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-slate-900">
+                                    ${hourOptionsHtml}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">結束日期 (截止) *</label>
+                                <input type="date" id="task-end-date" required class="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-slate-900">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 uppercase mb-1">結束時間 *</label>
+                                <select id="task-end-hour" required class="w-full px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-slate-900">
+                                    ${hourOptionsHtml}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                const today = getTodayDateString();
+                document.getElementById('task-start-date').value = today;
+                document.getElementById('task-end-date').value = today;
             }
         }
 
@@ -424,8 +443,8 @@
 
             const todayStr = getTodayDateString();
 
-            const todayCount = tasks.filter(t => !t.completed && (t.date === todayStr)).length;
-            const upcomingCount = tasks.filter(t => !t.completed && (t.date > todayStr)).length;
+            const todayCount = tasks.filter(t => !t.completed && (t.date === todayStr || (t.recurring !== 'none' && t.startDate <= todayStr && t.endDate >= todayStr))).length;
+            const upcomingCount = tasks.filter(t => !t.completed && (t.date > todayStr || (t.recurring !== 'none' && t.startDate > todayStr))).length;
             const allCount = tasks.filter(t => !t.completed).length;
             const completedCount = tasks.filter(t => t.completed).length;
 
@@ -434,7 +453,7 @@
             document.getElementById('badge-all').innerText = allCount;
             document.getElementById('badge-completed').innerText = completedCount;
 
-            const todayTasks = tasks.filter(t => t.date === todayStr);
+            const todayTasks = tasks.filter(t => t.date === todayStr || (t.recurring !== 'none' && t.startDate <= todayStr && t.endDate >= todayStr));
             const todayDone = todayTasks.filter(t => t.completed).length;
             const todayTotal = todayTasks.length;
             const percent = todayTotal > 0 ? Math.round((todayDone / todayTotal) * 100) : 0;
@@ -443,11 +462,11 @@
             document.getElementById('today-progress-bar').style.width = `${percent}%`;
 
             let filtered = tasks.filter(t => {
-                const tDate = t.date || todayStr;
+                const tDate = t.recurring !== 'none' ? t.startDate : (t.date || todayStr);
                 const c1 = t.category1 || t.category || '';
                 const c2 = t.category2 || '';
 
-                if (currentTab === 'today' && (t.completed || tDate !== todayStr)) return false;
+                if (currentTab === 'today' && (t.completed || (t.recurring === 'none' && tDate !== todayStr) || (t.recurring !== 'none' && (t.startDate > todayStr || t.endDate < todayStr)))) return false;
                 if (currentTab === 'upcoming' && (t.completed || tDate <= todayStr)) return false;
                 if (currentTab === 'all' && t.completed) return false;
                 if (currentTab === 'completed' && !t.completed) return false;
@@ -462,16 +481,19 @@
             });
 
             filtered.sort((a, b) => {
+                const dateA = a.recurring !== 'none' ? a.startDate : (a.date || '');
+                const dateB = b.recurring !== 'none' ? b.startDate : (b.date || '');
+                const timeA = a.recurring !== 'none' ? a.startTime : (a.time || '00:00');
+                const timeB = b.recurring !== 'none' ? b.startTime : (b.time || '00:00');
+
                 if (sortBy === 'priority') {
                     const weights = { high: 3, medium: 2, low: 1 };
                     const pDiff = weights[b.priority] - weights[a.priority];
                     if (pDiff !== 0) return pDiff;
-                    const dtA = (a.date || '') + ' ' + (a.time || '00:00');
-                    const dtB = (b.date || '') + ' ' + (b.time || '00:00');
-                    return dtA.localeCompare(dtB);
+                    return (dateA + ' ' + timeA).localeCompare(dateB + ' ' + timeB);
                 } else {
-                    const dtA = (a.date || '') + ' ' + (a.time || '00:00');
-                    const dtB = (b.date || '') + ' ' + (b.time || '00:00');
+                    const dtA = dateA + ' ' + timeA;
+                    const dtB = dateB + ' ' + timeB;
                     if (dtA !== dtB) return dtA.localeCompare(dtB);
                     const weights = { high: 3, medium: 2, low: 1 };
                     return weights[b.priority] - weights[a.priority];
@@ -504,15 +526,21 @@
                 }[t.priority];
 
                 let recurringText = '';
+                let dtDisplay = '';
+                let isOverdue = false;
+
                 if (t.recurring && t.recurring !== 'none') {
                     const typeMap = { daily: '每天', weekly: '每週', monthly: '每月' }[t.recurring];
-                    const endText = t.recurringEnd ? ` (至 ${t.recurringEnd})` : '';
-                    recurringText = `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded-md font-medium border border-slate-200"><i class="fa-solid fa-rotate-right mr-1"></i>${typeMap}${endText}</span>`;
+                    recurringText = `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded-md font-medium border border-slate-200"><i class="fa-solid fa-rotate-right mr-1"></i>${typeMap}重複</span>`;
+                    const sTime = t.startTime ? t.startTime.substring(0, 2) + ' 時' : '00 時';
+                    const eTime = t.endTime ? t.endTime.substring(0, 2) + ' 時' : '00 時';
+                    dtDisplay = `開始：${t.startDate} ${sTime} ｜ 結束：${t.endDate} ${eTime}`;
+                    isOverdue = !t.completed && (`${t.endDate} ${t.endTime || '00:00'}` < currentFullStr);
+                } else {
+                    const timeDisplay = t.time ? t.time.substring(0, 2) + ' 時' : '00 時';
+                    dtDisplay = `預計到期：${t.date || todayStr} ${timeDisplay}`;
+                    isOverdue = !t.completed && (`${t.date || todayStr} ${t.time || '00:00'}` < currentFullStr);
                 }
-
-                const timeDisplay = t.time ? t.time.substring(0, 2) + ' 時' : '00 時';
-                const dtDisplay = `${t.date || todayStr} ${timeDisplay}`;
-                const isOverdue = !t.completed && (`${t.date || todayStr} ${t.time || '00:00'}` < currentFullStr);
 
                 return `
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-start justify-between gap-4 hover:border-slate-400 transition">
@@ -529,7 +557,7 @@
                                 ${t.notes ? `<p class="text-xs text-slate-500">${escapeHtml(t.notes)}</p>` : ''}
                                 <div class="flex items-center text-xs text-slate-400 space-x-3 pt-1">
                                     <span class="flex items-center ${isOverdue ? 'text-slate-900 font-bold underline' : ''}">
-                                        <i class="fa-regular fa-clock mr-1"></i>預計到期：${dtDisplay} ${isOverdue ? '(已逾期)' : ''}
+                                        <i class="fa-regular fa-clock mr-1"></i>${dtDisplay} ${isOverdue ? '(已逾期)' : ''}
                                     </span>
                                 </div>
                             </div>
@@ -576,9 +604,9 @@
                 task.completed = !wasCompleted;
 
                 if (!wasCompleted && task.recurring && task.recurring !== 'none') {
-                    const next = calculateNextDateAndTime(task.date || getTodayDateString(), task.time || '10:00', task.recurring);
+                    const next = calculateNextDateAndTime(task.startDate || getTodayDateString(), task.startTime || '10:00', task.recurring);
                     let shouldRepeat = true;
-                    if (task.recurringEnd && next.date > task.recurringEnd) {
+                    if (task.endDate && next.date > task.endDate) {
                         shouldRepeat = false;
                     }
 
@@ -586,10 +614,13 @@
                         const nextTask = {
                             id: Date.now().toString(),
                             title: task.title,
-                            date: next.date,
-                            time: next.time,
+                            date: '',
+                            time: '',
                             recurring: task.recurring,
-                            recurringEnd: task.recurringEnd || '',
+                            startDate: next.date,
+                            startTime: next.time,
+                            endDate: task.endDate,
+                            endTime: task.endTime,
                             priority: task.priority,
                             category1: task.category1 || task.category || '',
                             category2: task.category2 || '',
@@ -614,11 +645,8 @@
             const modal = document.getElementById('task-modal');
             const titleEl = document.getElementById('modal-title');
             document.getElementById('task-form').reset();
-            document.getElementById('task-date').value = getTodayDateString();
-            document.getElementById('task-hour').value = '10:00';
             document.getElementById('task-recurring').value = 'none';
-            document.getElementById('task-recurring-end').value = '';
-            document.getElementById('recurring-end-container').classList.add('hidden');
+            toggleRecurringMode();
 
             if (id) {
                 titleEl.innerText = '編輯待辦事項';
@@ -626,13 +654,19 @@
                 if (task) {
                     document.getElementById('task-id').value = task.id;
                     document.getElementById('task-title').value = task.title;
-                    document.getElementById('task-date').value = task.date || getTodayDateString();
-                    document.getElementById('task-hour').value = task.time ? task.time.substring(0, 2) + ':00' : '10:00';
                     document.getElementById('task-recurring').value = task.recurring || 'none';
-                    document.getElementById('task-recurring-end').value = task.recurringEnd || '';
+                    toggleRecurringMode();
+
                     if (task.recurring && task.recurring !== 'none') {
-                        document.getElementById('recurring-end-container').classList.remove('hidden');
+                        document.getElementById('task-start-date').value = task.startDate || getTodayDateString();
+                        document.getElementById('task-start-hour').value = task.startTime || '10:00';
+                        document.getElementById('task-end-date').value = task.endDate || getTodayDateString();
+                        document.getElementById('task-end-hour').value = task.endTime || '10:00';
+                    } else {
+                        document.getElementById('task-date').value = task.date || getTodayDateString();
+                        document.getElementById('task-hour').value = task.time ? task.time.substring(0, 2) + ':00' : '10:00';
                     }
+
                     document.getElementById('task-priority').value = task.priority;
                     document.getElementById('task-category1').value = task.category1 || task.category || (categories1[0] ? categories1[0].id : '');
                     document.getElementById('task-category2').value = task.category2 || '';
@@ -656,14 +690,28 @@
             e.preventDefault();
             const id = document.getElementById('task-id').value;
             const title = document.getElementById('task-title').value;
-            const date = document.getElementById('task-date').value;
-            const time = document.getElementById('task-hour').value;
             const recurring = document.getElementById('task-recurring').value;
-            const recurringEnd = recurring !== 'none' ? document.getElementById('task-recurring-end').value : '';
             const priority = document.getElementById('task-priority').value;
             const category1 = document.getElementById('task-category1').value;
             const category2 = document.getElementById('task-category2').value;
             const notes = document.getElementById('task-notes').value;
+
+            let date = '';
+            let time = '';
+            let startDate = '';
+            let startTime = '';
+            let endDate = '';
+            let endTime = '';
+
+            if (recurring === 'none') {
+                date = document.getElementById('task-date').value;
+                time = document.getElementById('task-hour').value;
+            } else {
+                startDate = document.getElementById('task-start-date').value;
+                startTime = document.getElementById('task-start-hour').value;
+                endDate = document.getElementById('task-end-date').value;
+                endTime = document.getElementById('task-end-hour').value;
+            }
 
             if (id) {
                 const task = tasks.find(t => t.id === id);
@@ -672,7 +720,10 @@
                     task.date = date;
                     task.time = time;
                     task.recurring = recurring;
-                    task.recurringEnd = recurringEnd;
+                    task.startDate = startDate;
+                    task.startTime = startTime;
+                    task.endDate = endDate;
+                    task.endTime = endTime;
                     task.priority = priority;
                     task.category1 = category1;
                     task.category2 = category2;
@@ -685,7 +736,10 @@
                     date,
                     time,
                     recurring,
-                    recurringEnd,
+                    startDate,
+                    startTime,
+                    endDate,
+                    endTime,
                     priority,
                     category1,
                     category2,
@@ -740,14 +794,20 @@
                     <div class="flex items-center space-x-2">
                         <span class="px-2.5 py-1 text-xs rounded-md font-medium ${c.color}">${c.name}</span>
                     </div>
-                    <div class="flex items-center space-x-1">
-                        <button onclick="editCategory('${c.id}')" class="text-slate-400 hover:text-slate-800 p-1.5 transition" title="編輯名稱">
+                    <div class="flex items-center space-x-1.5">
+                        <select onchange="updateCategoryColor('${c.id}', this.value)" class="text-xs bg-white border border-slate-200 rounded-lg px-2 py-1 focus:outline-none">
+                            <option value="bg-slate-900 text-white" ${c.color.includes('slate-900') ? 'selected' : ''}>深黑</option>
+                            <option value="bg-slate-700 text-white" ${c.color.includes('slate-700') ? 'selected' : ''}>石墨灰</option>
+                            <option value="bg-slate-200 text-slate-800" ${c.color.includes('slate-200') ? 'selected' : ''}>淺灰</option>
+                            <option value="bg-slate-100 text-slate-700 border border-slate-300" ${c.color.includes('border') ? 'selected' : ''}>極簡白</option>
+                        </select>
+                        <button onclick="editCategory('${c.id}')" class="text-slate-400 hover:text-slate-800 p-1 transition" title="編輯名稱">
                             <i class="fa-solid fa-pen text-xs"></i>
                         </button>
                         ${(currentManageCatGroup === 1 && categories1.length <= 1) ? `
                             <span class="text-xs text-slate-400 ml-1">至少保留一個</span>
                         ` : `
-                            <button onclick="deleteCategory('${c.id}')" class="text-slate-400 hover:text-slate-900 p-1.5 transition" title="刪除標籤">
+                            <button onclick="deleteCategory('${c.id}')" class="text-slate-400 hover:text-slate-900 p-1 transition" title="刪除標籤">
                                 <i class="fa-solid fa-trash text-xs"></i>
                             </button>
                         `}
@@ -789,6 +849,16 @@
                 } else {
                     alert('標籤名稱不得為空白！');
                 }
+            }
+        }
+
+        function updateCategoryColor(id, newColor) {
+            const list = currentManageCatGroup === 1 ? categories1 : categories2;
+            const cat = list.find(c => c.id === id);
+            if (cat) {
+                cat.color = newColor;
+                saveData();
+                renderCategoryList();
             }
         }
 
