@@ -14,11 +14,11 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            500: '#22c55e',
-                            600: '#16a34a',
-                            700: '#15803d',
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            500: '#334155',
+                            600: '#0f172a',
+                            700: '#020617',
                         }
                     }
                 }
@@ -32,7 +32,7 @@
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="bg-brand-600 text-white p-2 rounded-xl shadow-md">
+                <div class="bg-slate-900 text-white p-2 rounded-xl shadow-md">
                     <i class="fa-solid fa-list-check text-xl"></i>
                 </div>
                 <div>
@@ -42,9 +42,9 @@
             </div>
             <div class="flex items-center space-x-2">
                 <button onclick="openCategoryModal()" class="inline-flex items-center px-3 py-2 border border-slate-300 text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 transition shadow-sm">
-                    <i class="fa-solid fa-tags mr-2 text-brand-600"></i>管理標籤
+                    <i class="fa-solid fa-tags mr-2 text-slate-900"></i>管理標籤
                 </button>
-                <button onclick="openTaskModal()" class="inline-flex items-center px-4 py-2 bg-brand-600 border border-transparent rounded-lg font-semibold text-sm text-white hover:bg-brand-700 transition shadow-md">
+                <button onclick="openTaskModal()" class="inline-flex items-center px-4 py-2 bg-slate-900 border border-transparent rounded-lg font-semibold text-sm text-white hover:bg-slate-800 transition shadow-md">
                     <i class="fa-solid fa-plus mr-2"></i>新增待辦
                 </button>
             </div>
@@ -61,21 +61,508 @@
                 <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-3">今日完成進度</h2>
                 <div class="flex justify-between text-sm text-slate-600 mb-1">
                     <span id="today-stats-text">已完成 0 / 0</span>
-                    <span id="today-stats-percent" class="font-semibold text-brand-600">0%</span>
+                    <span id="today-stats-percent" class="font-semibold text-slate-900">0%</span>
                 </div>
                 <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                    <div id="today-progress-bar" class="bg-brand-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    <div id="today-progress-bar" class="bg-slate-900 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
                 </div>
             </div>
 
             <!-- Navigation Tabs -->
             <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm space-y-1">
-                <button onclick="switchTab('today')" id="tab-btn-today" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition bg-brand-50 text-brand-700">
+                <button onclick="switchTab('today')" id="tab-btn-today" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition bg-slate-900 text-white">
                     <span class="flex items-center"><i class="fa-solid fa-sun w-5 mr-2"></i>今日焦點</span>
-                    <span id="badge-today" class="bg-brand-200 text-brand-800 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                    <span id="badge-today" class="bg-slate-700 text-white text-xs px-2 py-0.5 rounded-full font-bold">0</span>
                 </button>
                 <button onclick="switchTab('upcoming')" id="tab-btn-upcoming" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition text-slate-600 hover:bg-slate-50">
                     <span class="flex items-center"><i class="fa-solid fa-calendar-days w-5 mr-2"></i>未來計畫</span>
                     <span id="badge-upcoming" class="bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
                 </button>
-                <button onclick="switchTab('all')" id="tab-btn-all" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition text-slate-600 hover:bg-slate-
+                <button onclick="switchTab('all')" id="tab-btn-all" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition text-slate-600 hover:bg-slate-50">
+                    <span class="flex items-center"><i class="fa-solid fa-layer-group w-5 mr-2"></i>全部總覽</span>
+                    <span id="badge-all" class="bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                </button>
+                <button onclick="switchTab('completed')" id="tab-btn-completed" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition text-slate-600 hover:bg-slate-50">
+                    <span class="flex items-center"><i class="fa-solid fa-circle-check w-5 mr-2"></i>已完成紀錄</span>
+                    <span id="badge-completed" class="bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                </button>
+            </div>
+
+            <!-- Data Backup Controls -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">資料管理與備份</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="exportData()" class="w-full px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg transition flex items-center justify-center">
+                        <i class="fa-solid fa-download mr-1.5"></i>匯出備份
+                    </button>
+                    <label class="w-full px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg transition flex items-center justify-center cursor-pointer">
+                        <i class="fa-solid fa-upload mr-1.5"></i>匯入還原
+                        <input type="file" id="import-file" accept=".json" class="hidden" onchange="importData(event)">
+                    </label>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <section class="lg:col-span-3 space-y-4">
+            <!-- Search & Filters Bar -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-3 items-center justify-between">
+                <div class="relative w-full sm:w-72">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" id="search-input" oninput="renderTasks()" placeholder="搜尋待辦事項..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition">
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+                    <select id="filter-category" onchange="renderTasks()" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900">
+                        <option value="all">全部分類</option>
+                    </select>
+                    <select id="filter-priority" onchange="renderTasks()" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900">
+                        <option value="all">全部優先程度</option>
+                        <option value="high">高程度</option>
+                        <option value="medium">中程度</option>
+                        <option value="low">低程度</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Task List Container -->
+            <div id="task-list" class="space-y-3">
+                <!-- JavaScript 動態渲染項目 -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Task Modal (新增/編輯) -->
+    <div id="task-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4 border border-slate-100">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+                <h3 id="modal-title" class="text-lg font-bold text-slate-900">新增待辦事項</h3>
+                <button onclick="closeTaskModal()" class="text-slate-400 hover:text-slate-600 transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <form id="task-form" onsubmit="handleTaskSubmit(event)" class="space-y-4">
+                <input type="hidden" id="task-id">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">任務標題 *</label>
+                    <input type="text" id="task-title" required placeholder="例如：完成客戶專案簡報" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">預計到期日與時間 *</label>
+                    <input type="datetime-local" id="task-datetime" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                </div>
+                <!-- 優先程度與分類標籤 同一列 -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">優先程度</label>
+                        <select id="task-priority" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                            <option value="low">低程度</option>
+                            <option value="medium" selected>中程度</option>
+                            <option value="high">高程度</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">分類標籤</label>
+                        <select id="task-category" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                            <!-- 動態填充 -->
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">備註說明</label>
+                    <textarea id="task-notes" rows="3" placeholder="補充細節或相關連結..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"></textarea>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeTaskModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition">取消</button>
+                    <button type="submit" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-xl transition shadow-md">儲存任務</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Management Modal (標籤管理視窗) -->
+    <div id="category-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4 border border-slate-100">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+                <h3 class="text-lg font-bold text-slate-900">管理分類標籤</h3>
+                <button onclick="closeCategoryModal()" class="text-slate-400 hover:text-slate-600 transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <!-- 新增標籤 -->
+            <form onsubmit="handleCategoryAdd(event)" class="flex gap-2 items-end bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <div class="flex-1">
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">新標籤名稱</label>
+                    <input type="text" id="new-cat-name" required placeholder="例如：整理、健身" class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">顏色調性</label>
+                    <select id="new-cat-color" class="px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                        <option value="bg-slate-900 text-white">深黑</option>
+                        <option value="bg-slate-700 text-white" selected>石墨灰</option>
+                        <option value="bg-slate-200 text-slate-800">淺灰</option>
+                        <option value="bg-slate-100 text-slate-700 border border-slate-300">極簡白</option>
+                    </select>
+                </div>
+                <button type="submit" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-lg transition shadow-sm">新增</button>
+            </form>
+
+            <!-- 現有標籤列表（可刪除） -->
+            <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="category-list-container">
+                <!-- 動態填充 -->
+            </div>
+
+            <div class="flex justify-end pt-2">
+                <button type="button" onclick="closeCategoryModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition">關閉</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 邏輯 -->
+    <script>
+        function getNowDateTimeLocalString() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+
+        let categories = JSON.parse(localStorage.getItem('taskflow_categories')) || [
+            { id: 'work', name: '工作', color: 'bg-slate-900 text-white' },
+            { id: 'personal', name: '個人', color: 'bg-slate-700 text-white' },
+            { id: 'study', name: '學習', color: 'bg-slate-200 text-slate-800' },
+            { id: 'shopping', name: '購物', color: 'bg-slate-100 text-slate-700 border border-slate-300' }
+        ];
+
+        let tasks = JSON.parse(localStorage.getItem('taskflow_tasks')) || [
+            { id: '1', title: '完成專案報告草稿', datetime: getNowDateTimeLocalString().split('T')[0] + 'T17:00', priority: 'high', category: 'work', notes: '確認數據與圖表細節', completed: false },
+            { id: '2', title: '採買本週食材與日用品', datetime: getNowDateTimeLocalString().split('T')[0] + 'T19:30', priority: 'medium', category: 'shopping', notes: '記得帶環保袋', completed: false }
+        ];
+
+        let currentTab = 'today';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCategoryDropdowns();
+            renderTasks();
+        });
+
+        function saveData() {
+            localStorage.setItem('taskflow_tasks', JSON.stringify(tasks));
+            localStorage.setItem('taskflow_categories', JSON.stringify(categories));
+            updateCategoryDropdowns();
+            renderTasks();
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            ['today', 'upcoming', 'all', 'completed'].forEach(t => {
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (t === tab) {
+                    btn.className = "w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition bg-slate-900 text-white";
+                    document.getElementById(`badge-${t}`).className = "bg-slate-700 text-white text-xs px-2 py-0.5 rounded-full font-bold";
+                } else {
+                    btn.className = "w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium transition text-slate-600 hover:bg-slate-50";
+                    document.getElementById(`badge-${t}`).className = "bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded-full font-bold";
+                }
+            });
+            renderTasks();
+        }
+
+        function updateCategoryDropdowns() {
+            const filterCat = document.getElementById('filter-category');
+            const taskCat = document.getElementById('task-category');
+            const currentFilterVal = filterCat.value;
+            const currentTaskCatVal = taskCat.value;
+
+            filterCat.innerHTML = '<option value="all">全部分類</option>' + categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            filterCat.value = currentFilterVal;
+
+            taskCat.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            if (categories.some(c => c.id === currentTaskCatVal)) {
+                taskCat.value = currentTaskCatVal;
+            }
+        }
+
+        function renderTasks() {
+            const listEl = document.getElementById('task-list');
+            const searchVal = document.getElementById('search-input').value.toLowerCase();
+            const catFilter = document.getElementById('filter-category').value;
+            const prioFilter = document.getElementById('filter-priority').value;
+
+            const now = new Date();
+            const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+            const todayCount = tasks.filter(t => !t.completed && (t.datetime || t.date || '').startsWith(todayStr)).length;
+            const upcomingCount = tasks.filter(t => !t.completed && (t.datetime || t.date || '') > (todayStr + 'T23:59')).length;
+            const allCount = tasks.filter(t => !t.completed).length;
+            const completedCount = tasks.filter(t => t.completed).length;
+
+            document.getElementById('badge-today').innerText = todayCount;
+            document.getElementById('badge-upcoming').innerText = upcomingCount;
+            document.getElementById('badge-all').innerText = allCount;
+            document.getElementById('badge-completed').innerText = completedCount;
+
+            const todayTasks = tasks.filter(t => (t.datetime || t.date || '').startsWith(todayStr));
+            const todayDone = todayTasks.filter(t => t.completed).length;
+            const todayTotal = todayTasks.length;
+            const percent = todayTotal > 0 ? Math.round((todayDone / todayTotal) * 100) : 0;
+            document.getElementById('today-stats-text').innerText = `已完成 ${todayDone} / ${todayTotal}`;
+            document.getElementById('today-stats-percent').innerText = `${percent}%`;
+            document.getElementById('today-progress-bar').style.width = `${percent}%`;
+
+            let filtered = tasks.filter(t => {
+                const taskDt = t.datetime || (t.date ? t.date + 'T23:59' : '');
+
+                if (currentTab === 'today' && (t.completed || !taskDt.startsWith(todayStr))) return false;
+                if (currentTab === 'upcoming' && (t.completed || taskDt <= (todayStr + 'T23:59'))) return false;
+                if (currentTab === 'all' && t.completed) return false;
+                if (currentTab === 'completed' && !t.completed) return false;
+
+                if (searchVal && !t.title.toLowerCase().includes(searchVal) && (!t.notes || !t.notes.toLowerCase().includes(searchVal))) return false;
+                if (catFilter !== 'all' && t.category !== catFilter) return false;
+                if (prioFilter !== 'all' && t.priority !== prioFilter) return false;
+
+                return true;
+            });
+
+            filtered.sort((a, b) => {
+                const dtA = a.datetime || a.date || '';
+                const dtB = b.datetime || b.date || '';
+                if (dtA !== dtB) return dtA.localeCompare(dtB);
+                const weights = { high: 3, medium: 2, low: 1 };
+                return weights[b.priority] - weights[a.priority];
+            });
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `
+                    <div class="bg-white p-12 rounded-2xl border border-slate-200 text-center space-y-3">
+                        <div class="text-slate-300 text-4xl"><i class="fa-solid fa-clipboard-check"></i></div>
+                        <p class="text-slate-500 text-sm">目前沒有找到相關的待辦事項</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const currentISOFull = getNowDateTimeLocalString();
+
+            listEl.innerHTML = filtered.map(t => {
+                const catObj = categories.find(c => c.id === t.category) || { name: '未分類', color: 'bg-slate-100 text-slate-800' };
+                const prioBadge = {
+                    high: '<span class="px-2 py-0.5 bg-slate-900 text-white text-xs rounded-md font-medium">高程度</span>',
+                    medium: '<span class="px-2 py-0.5 bg-slate-200 text-slate-800 text-xs rounded-md font-medium">中程度</span>',
+                    low: '<span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-xs rounded-md font-medium border border-slate-200">低程度</span>'
+                }[t.priority];
+
+                const dtDisplay = t.datetime ? t.datetime.replace('T', ' ') : (t.date || '');
+                const isOverdue = !t.completed && (t.datetime ? t.datetime < currentISOFull : (t.date && t.date < todayStr));
+
+                return `
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-start justify-between gap-4 hover:border-slate-400 transition">
+                        <div class="flex items-start space-x-3 flex-1">
+                            <input type="checkbox" ${t.completed ? 'checked' : ''} onclick="toggleTask('${t.id}')" class="mt-1 h-4 w-4 text-slate-900 focus:ring-slate-900 border-slate-300 rounded cursor-pointer">
+                            <div class="space-y-1 flex-1">
+                                <div class="flex items-center flex-wrap gap-2">
+                                    <h3 class="text-sm font-bold text-slate-900 ${t.completed ? 'line-through text-slate-400' : ''}">${escapeHtml(t.title)}</h3>
+                                    <span class="px-2 py-0.5 text-xs rounded-md font-medium ${catObj.color}">${catObj.name}</span>
+                                    ${prioBadge}
+                                </div>
+                                ${t.notes ? `<p class="text-xs text-slate-500">${escapeHtml(t.notes)}</p>` : ''}
+                                <div class="flex items-center text-xs text-slate-400 space-x-3 pt-1">
+                                    <span class="flex items-center ${isOverdue ? 'text-slate-900 font-bold underline' : ''}">
+                                        <i class="fa-regular fa-clock mr-1"></i>預計到期：${dtDisplay} ${isOverdue ? '(已逾期)' : ''}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-1">
+                            <button onclick="openTaskModal('${t.id}')" class="p-2 text-slate-400 hover:text-slate-800 rounded-lg hover:bg-slate-50 transition" title="編輯">
+                                <i class="fa-solid fa-pen text-xs"></i>
+                            </button>
+                            <button onclick="deleteTask('${t.id}')" class="p-2 text-slate-400 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition" title="刪除">
+                                <i class="fa-solid fa-trash text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                saveData();
+            }
+        }
+
+        function deleteTask(id) {
+            if (confirm('確定要刪除這個待辦事項嗎？')) {
+                tasks = tasks.filter(t => t.id !== id);
+                saveData();
+            }
+        }
+
+        function openTaskModal(id = null) {
+            const modal = document.getElementById('task-modal');
+            const titleEl = document.getElementById('modal-title');
+            document.getElementById('task-form').reset();
+            document.getElementById('task-datetime').value = getNowDateTimeLocalString();
+
+            if (id) {
+                titleEl.innerText = '編輯待辦事項';
+                const task = tasks.find(t => t.id === id);
+                if (task) {
+                    document.getElementById('task-id').value = task.id;
+                    document.getElementById('task-title').value = task.title;
+                    document.getElementById('task-datetime').value = task.datetime || (task.date ? task.date + 'T12:00' : getNowDateTimeLocalString());
+                    document.getElementById('task-priority').value = task.priority;
+                    document.getElementById('task-category').value = task.category;
+                    document.getElementById('task-notes').value = task.notes || '';
+                }
+            } else {
+                titleEl.innerText = '新增待辦事項';
+                document.getElementById('task-id').value = '';
+            }
+            modal.classList.remove('hidden');
+        }
+
+        function closeTaskModal() {
+            document.getElementById('task-modal').classList.add('hidden');
+        }
+
+        function handleTaskSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('task-id').value;
+            const title = document.getElementById('task-title').value;
+            const datetime = document.getElementById('task-datetime').value;
+            const priority = document.getElementById('task-priority').value;
+            const category = document.getElementById('task-category').value;
+            const notes = document.getElementById('task-notes').value;
+
+            if (id) {
+                const task = tasks.find(t => t.id === id);
+                if (task) {
+                    task.title = title;
+                    task.datetime = datetime;
+                    task.date = datetime.split('T')[0];
+                    task.priority = priority;
+                    task.category = category;
+                    task.notes = notes;
+                }
+            } else {
+                const newTask = {
+                    id: Date.now().toString(),
+                    title,
+                    datetime,
+                    date: datetime.split('T')[0],
+                    priority,
+                    category,
+                    notes,
+                    completed: false
+                };
+                tasks.push(newTask);
+            }
+
+            saveData();
+            closeTaskModal();
+        }
+
+        function openCategoryModal() {
+            renderCategoryList();
+            document.getElementById('category-modal').classList.remove('hidden');
+        }
+
+        function closeCategoryModal() {
+            document.getElementById('category-modal').classList.add('hidden');
+        }
+
+        function renderCategoryList() {
+            const container = document.getElementById('category-list-container');
+            container.innerHTML = categories.map(c => `
+                <div class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2.5 py-1 text-xs rounded-md font-medium ${c.color}">${c.name}</span>
+                    </div>
+                    ${categories.length > 1 ? `
+                        <button onclick="deleteCategory('${c.id}')" class="text-slate-400 hover:text-slate-900 p-1 transition" title="刪除標籤">
+                            <i class="fa-solid fa-trash text-xs"></i>
+                        </button>
+                    ` : '<span class="text-xs text-slate-400">預設</span>'}
+                </div>
+            `).join('');
+        }
+
+        function handleCategoryAdd(e) {
+            e.preventDefault();
+            const name = document.getElementById('new-cat-name').value.trim();
+            const color = document.getElementById('new-cat-color').value;
+            const id = 'cat_' + Date.now();
+
+            if (name) {
+                categories.push({ id, name, color });
+                document.getElementById('new-cat-name').value = '';
+                saveData();
+                renderCategoryList();
+            }
+        }
+
+        function deleteCategory(id) {
+            if (categories.length <= 1) {
+                alert('至少必須保留一個分類標籤！');
+                return;
+            }
+            if (confirm('刪除標籤後，原標籤的待辦事項將轉為預設分類。確定刪除嗎？')) {
+                categories = categories.filter(c => c.id !== id);
+                const fallbackCat = categories[0].id;
+                tasks.forEach(t => {
+                    if (t.category === id) t.category = fallbackCat;
+                });
+                saveData();
+                renderCategoryList();
+            }
+        }
+
+        function exportData() {
+            const data = { tasks, categories };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `taskflow_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.tasks && data.categories) {
+                        tasks = data.tasks;
+                        categories = data.categories;
+                        saveData();
+                        alert('資料匯入還原成功！');
+                    } else {
+                        alert('備份檔案格式不正確！');
+                    }
+                } catch (err) {
+                    alert('解析備份檔案失敗！');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
