@@ -105,24 +105,34 @@
 
         <!-- Content Area -->
         <section class="lg:col-span-3 space-y-4">
-            <!-- Search & Filters Bar -->
-            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-3 items-center justify-between">
-                <div class="relative w-full sm:w-72">
+            <!-- Search & Filters Bar (整合在同一列) -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                <div class="relative w-full">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </span>
                     <input type="text" id="search-input" oninput="renderTasks()" placeholder="搜尋待辦事項..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition">
                 </div>
-                <div class="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
-                    <select id="filter-category" onchange="renderTasks()" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900">
-                        <option value="all">全部分類</option>
-                    </select>
-                    <select id="filter-priority" onchange="renderTasks()" class="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900">
-                        <option value="all">全部優先程度</option>
-                        <option value="high">高程度</option>
-                        <option value="medium">中程度</option>
-                        <option value="low">低程度</option>
-                    </select>
+                <!-- 篩選器：分類 1、分類 2、優先程度 同一列 -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 border-t border-slate-100">
+                    <div>
+                        <select id="filter-category1" onchange="renderTasks()" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900">
+                            <option value="all">全部 - 分類 1</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select id="filter-category2" onchange="renderTasks()" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900">
+                            <option value="all">全部 - 分類 2</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select id="filter-priority" onchange="renderTasks()" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900">
+                            <option value="all">全部優先程度</option>
+                            <option value="high">高程度</option>
+                            <option value="medium">中程度</option>
+                            <option value="low">低程度</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -146,14 +156,32 @@
                 <input type="hidden" id="task-id">
                 <div>
                     <label class="block text-xs font-bold text-slate-600 uppercase mb-1">任務標題 *</label>
-                    <input type="text" id="task-title" required placeholder="例如：完成客戶專案簡報" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                    <input type="text" id="task-title" required placeholder="例如：每週週報彙整" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">預計到期日與時間 *</label>
-                    <input type="datetime-local" id="task-datetime" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
-                </div>
-                <!-- 優先程度與分類標籤 同一列 -->
+
+                <!-- 預計到期日與時間 -->
                 <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">預計到期日 *</label>
+                        <input type="date" id="task-date" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">預計時間 *</label>
+                        <input type="time" id="task-time" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                    </div>
+                </div>
+
+                <!-- 重複週期 (左) 與 優先程度 (右) -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">重複週期</label>
+                        <select id="task-recurring" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                            <option value="none">不重複</option>
+                            <option value="daily">每天重複</option>
+                            <option value="weekly">每週重複</option>
+                            <option value="monthly">每月重複</option>
+                        </select>
+                    </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-600 uppercase mb-1">優先程度</label>
                         <select id="task-priority" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
@@ -162,17 +190,30 @@
                             <option value="high">高程度</option>
                         </select>
                     </div>
+                </div>
+
+                <!-- 分類標籤 1 與 分類標籤 2 -->
+                <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">分類標籤</label>
-                        <select id="task-category" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">分類標籤 1</label>
+                        <select id="task-category1" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                            <!-- 動態填充 -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">分類標籤 2</label>
+                        <select id="task-category2" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                            <option value="">(無)</option>
                             <!-- 動態填充 -->
                         </select>
                     </div>
                 </div>
+
                 <div>
                     <label class="block text-xs font-bold text-slate-600 uppercase mb-1">備註說明</label>
                     <textarea id="task-notes" rows="3" placeholder="補充細節或相關連結..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"></textarea>
                 </div>
+
                 <div class="flex justify-end space-x-2 pt-2">
                     <button type="button" onclick="closeTaskModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium rounded-xl transition">取消</button>
                     <button type="submit" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-xl transition shadow-md">儲存任務</button>
@@ -191,11 +232,21 @@
                 </button>
             </div>
             
-            <!-- 新增標籤 -->
+            <!-- 分類標籤 1 / 分類標籤 2 切換分頁 -->
+            <div class="flex bg-slate-100 p-1 rounded-xl">
+                <button onclick="switchCategoryManageTab(1)" id="cat-tab-btn-1" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition bg-white text-slate-900 shadow-sm">
+                    分類標籤 1
+                </button>
+                <button onclick="switchCategoryManageTab(2)" id="cat-tab-btn-2" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition text-slate-500 hover:text-slate-800">
+                    分類標籤 2
+                </button>
+            </div>
+
+            <!-- 新增標籤表單 -->
             <form onsubmit="handleCategoryAdd(event)" class="flex gap-2 items-end bg-slate-50 p-3 rounded-xl border border-slate-200">
                 <div class="flex-1">
-                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">新標籤名稱</label>
-                    <input type="text" id="new-cat-name" required placeholder="例如：整理、健身" class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1" id="new-cat-label">新增至 分類標籤 1</label>
+                    <input type="text" id="new-cat-name" required placeholder="例如：專案A、行政" class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-600 uppercase mb-1">顏色調性</label>
@@ -222,29 +273,40 @@
 
     <!-- JavaScript 邏輯 -->
     <script>
-        function getNowDateTimeLocalString() {
+        function getTodayDateString() {
             const now = new Date();
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            return `${year}-${month}-${day}T${hours}:${minutes}`;
+            return `${year}-${month}-${day}`;
         }
 
-        let categories = JSON.parse(localStorage.getItem('taskflow_categories')) || [
+        function getCurrentTimeString() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        let categories1 = JSON.parse(localStorage.getItem('taskflow_categories1')) || JSON.parse(localStorage.getItem('taskflow_categories')) || [
             { id: 'work', name: '工作', color: 'bg-slate-900 text-white' },
             { id: 'personal', name: '個人', color: 'bg-slate-700 text-white' },
-            { id: 'study', name: '學習', color: 'bg-slate-200 text-slate-800' },
-            { id: 'shopping', name: '購物', color: 'bg-slate-100 text-slate-700 border border-slate-300' }
+            { id: 'study', name: '學習', color: 'bg-slate-200 text-slate-800' }
+        ];
+
+        let categories2 = JSON.parse(localStorage.getItem('taskflow_categories2')) || [
+            { id: 'project_a', name: '重點專案', color: 'bg-slate-900 text-white' },
+            { id: 'routine', name: '日常例行', color: 'bg-slate-700 text-white' },
+            { id: 'shopping', name: '採購備忘', color: 'bg-slate-100 text-slate-700 border border-slate-300' }
         ];
 
         let tasks = JSON.parse(localStorage.getItem('taskflow_tasks')) || [
-            { id: '1', title: '完成專案報告草稿', datetime: getNowDateTimeLocalString().split('T')[0] + 'T17:00', priority: 'high', category: 'work', notes: '確認數據與圖表細節', completed: false },
-            { id: '2', title: '採買本週食材與日用品', datetime: getNowDateTimeLocalString().split('T')[0] + 'T19:30', priority: 'medium', category: 'shopping', notes: '記得帶環保袋', completed: false }
+            { id: '1', title: '完成專案報告草稿', date: getTodayDateString(), time: '17:00', priority: 'high', category1: 'work', category2: 'project_a', recurring: 'none', notes: '確認數據與圖表細節', completed: false },
+            { id: '2', title: '每週部門進度會議記錄', date: getTodayDateString(), time: '10:00', priority: 'medium', category1: 'work', category2: 'routine', recurring: 'weekly', notes: '記得整理 Action Items', completed: false }
         ];
 
         let currentTab = 'today';
+        let currentManageCatGroup = 1;
 
         document.addEventListener('DOMContentLoaded', () => {
             updateCategoryDropdowns();
@@ -253,7 +315,8 @@
 
         function saveData() {
             localStorage.setItem('taskflow_tasks', JSON.stringify(tasks));
-            localStorage.setItem('taskflow_categories', JSON.stringify(categories));
+            localStorage.setItem('taskflow_categories1', JSON.stringify(categories1));
+            localStorage.setItem('taskflow_categories2', JSON.stringify(categories2));
             updateCategoryDropdowns();
             renderTasks();
         }
@@ -274,31 +337,44 @@
         }
 
         function updateCategoryDropdowns() {
-            const filterCat = document.getElementById('filter-category');
-            const taskCat = document.getElementById('task-category');
-            const currentFilterVal = filterCat.value;
-            const currentTaskCatVal = taskCat.value;
+            const filterCat1 = document.getElementById('filter-category1');
+            const filterCat2 = document.getElementById('filter-category2');
+            const cat1 = document.getElementById('task-category1');
+            const cat2 = document.getElementById('task-category2');
+            
+            const currentFilter1Val = filterCat1.value;
+            const currentFilter2Val = filterCat2.value;
+            const currentCat1Val = cat1.value;
+            const currentCat2Val = cat2.value;
 
-            filterCat.innerHTML = '<option value="all">全部分類</option>' + categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-            filterCat.value = currentFilterVal;
+            filterCat1.innerHTML = '<option value="all">全部 - 分類 1</option>' + categories1.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            filterCat1.value = currentFilter1Val;
 
-            taskCat.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-            if (categories.some(c => c.id === currentTaskCatVal)) {
-                taskCat.value = currentTaskCatVal;
+            filterCat2.innerHTML = '<option value="all">全部 - 分類 2</option>' + categories2.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            filterCat2.value = currentFilter2Val;
+
+            cat1.innerHTML = categories1.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            if (categories1.some(c => c.id === currentCat1Val)) {
+                cat1.value = currentCat1Val;
+            }
+
+            cat2.innerHTML = '<option value="">(無)</option>' + categories2.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            if (currentCat2Val === '' || categories2.some(c => c.id === currentCat2Val)) {
+                cat2.value = currentCat2Val;
             }
         }
 
         function renderTasks() {
             const listEl = document.getElementById('task-list');
             const searchVal = document.getElementById('search-input').value.toLowerCase();
-            const catFilter = document.getElementById('filter-category').value;
+            const cat1Filter = document.getElementById('filter-category1').value;
+            const cat2Filter = document.getElementById('filter-category2').value;
             const prioFilter = document.getElementById('filter-priority').value;
 
-            const now = new Date();
-            const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            const todayStr = getTodayDateString();
 
-            const todayCount = tasks.filter(t => !t.completed && (t.datetime || t.date || '').startsWith(todayStr)).length;
-            const upcomingCount = tasks.filter(t => !t.completed && (t.datetime || t.date || '') > (todayStr + 'T23:59')).length;
+            const todayCount = tasks.filter(t => !t.completed && (t.date === todayStr)).length;
+            const upcomingCount = tasks.filter(t => !t.completed && (t.date > todayStr)).length;
             const allCount = tasks.filter(t => !t.completed).length;
             const completedCount = tasks.filter(t => t.completed).length;
 
@@ -307,7 +383,7 @@
             document.getElementById('badge-all').innerText = allCount;
             document.getElementById('badge-completed').innerText = completedCount;
 
-            const todayTasks = tasks.filter(t => (t.datetime || t.date || '').startsWith(todayStr));
+            const todayTasks = tasks.filter(t => t.date === todayStr);
             const todayDone = todayTasks.filter(t => t.completed).length;
             const todayTotal = todayTasks.length;
             const percent = todayTotal > 0 ? Math.round((todayDone / todayTotal) * 100) : 0;
@@ -316,23 +392,27 @@
             document.getElementById('today-progress-bar').style.width = `${percent}%`;
 
             let filtered = tasks.filter(t => {
-                const taskDt = t.datetime || (t.date ? t.date + 'T23:59' : '');
+                const tDate = t.date || todayStr;
+                const c1 = t.category1 || t.category || '';
+                const c2 = t.category2 || '';
 
-                if (currentTab === 'today' && (t.completed || !taskDt.startsWith(todayStr))) return false;
-                if (currentTab === 'upcoming' && (t.completed || taskDt <= (todayStr + 'T23:59'))) return false;
+                if (currentTab === 'today' && (t.completed || tDate !== todayStr)) return false;
+                if (currentTab === 'upcoming' && (t.completed || tDate <= todayStr)) return false;
                 if (currentTab === 'all' && t.completed) return false;
                 if (currentTab === 'completed' && !t.completed) return false;
 
                 if (searchVal && !t.title.toLowerCase().includes(searchVal) && (!t.notes || !t.notes.toLowerCase().includes(searchVal))) return false;
-                if (catFilter !== 'all' && t.category !== catFilter) return false;
+                
+                if (cat1Filter !== 'all' && c1 !== cat1Filter) return false;
+                if (cat2Filter !== 'all' && c2 !== cat2Filter) return false;
                 if (prioFilter !== 'all' && t.priority !== prioFilter) return false;
 
                 return true;
             });
 
             filtered.sort((a, b) => {
-                const dtA = a.datetime || a.date || '';
-                const dtB = b.datetime || b.date || '';
+                const dtA = (a.date || '') + ' ' + (a.time || '00:00');
+                const dtB = (b.date || '') + ' ' + (b.time || '00:00');
                 if (dtA !== dtB) return dtA.localeCompare(dtB);
                 const weights = { high: 3, medium: 2, low: 1 };
                 return weights[b.priority] - weights[a.priority];
@@ -348,18 +428,30 @@
                 return;
             }
 
-            const currentISOFull = getNowDateTimeLocalString();
+            const currentFullStr = getTodayDateString() + ' ' + getCurrentTimeString();
 
             listEl.innerHTML = filtered.map(t => {
-                const catObj = categories.find(c => c.id === t.category) || { name: '未分類', color: 'bg-slate-100 text-slate-800' };
+                const c1Id = t.category1 || t.category || '';
+                const c2Id = t.category2 || '';
+
+                const catObj1 = categories1.find(c => c.id === c1Id) || { name: '未分類', color: 'bg-slate-100 text-slate-800' };
+                const catObj2 = categories2.find(c => c.id === c2Id);
+
                 const prioBadge = {
                     high: '<span class="px-2 py-0.5 bg-slate-900 text-white text-xs rounded-md font-medium">高程度</span>',
                     medium: '<span class="px-2 py-0.5 bg-slate-200 text-slate-800 text-xs rounded-md font-medium">中程度</span>',
                     low: '<span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-xs rounded-md font-medium border border-slate-200">低程度</span>'
                 }[t.priority];
 
-                const dtDisplay = t.datetime ? t.datetime.replace('T', ' ') : (t.date || '');
-                const isOverdue = !t.completed && (t.datetime ? t.datetime < currentISOFull : (t.date && t.date < todayStr));
+                const recurringBadge = {
+                    daily: '<span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded-md font-medium border border-slate-200"><i class="fa-solid fa-rotate-right mr-1"></i>每天</span>',
+                    weekly: '<span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded-md font-medium border border-slate-200"><i class="fa-solid fa-rotate-right mr-1"></i>每週</span>',
+                    monthly: '<span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded-md font-medium border border-slate-200"><i class="fa-solid fa-rotate-right mr-1"></i>每月</span>',
+                    none: ''
+                }[t.recurring || 'none'];
+
+                const dtDisplay = `${t.date || todayStr} ${t.time || '00:00'}`;
+                const isOverdue = !t.completed && (dtDisplay < currentFullStr);
 
                 return `
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-start justify-between gap-4 hover:border-slate-400 transition">
@@ -368,8 +460,10 @@
                             <div class="space-y-1 flex-1">
                                 <div class="flex items-center flex-wrap gap-2">
                                     <h3 class="text-sm font-bold text-slate-900 ${t.completed ? 'line-through text-slate-400' : ''}">${escapeHtml(t.title)}</h3>
-                                    <span class="px-2 py-0.5 text-xs rounded-md font-medium ${catObj.color}">${catObj.name}</span>
+                                    <span class="px-2 py-0.5 text-xs rounded-md font-medium ${catObj1.color}">${catObj1.name}</span>
+                                    ${catObj2 ? `<span class="px-2 py-0.5 text-xs rounded-md font-medium ${catObj2.color}">${catObj2.name}</span>` : ''}
                                     ${prioBadge}
+                                    ${recurringBadge}
                                 </div>
                                 ${t.notes ? `<p class="text-xs text-slate-500">${escapeHtml(t.notes)}</p>` : ''}
                                 <div class="flex items-center text-xs text-slate-400 space-x-3 pt-1">
@@ -392,10 +486,51 @@
             }).join('');
         }
 
+        function calculateNextDateAndTime(dateStr, timeStr, recurringType) {
+            const dt = new Date(`${dateStr}T${timeStr || '00:00'}`);
+            if (isNaN(dt.getTime())) return { date: dateStr, time: timeStr };
+
+            if (recurringType === 'daily') {
+                dt.setDate(dt.getDate() + 1);
+            } else if (recurringType === 'weekly') {
+                dt.setDate(dt.getDate() + 7);
+            } else if (recurringType === 'monthly') {
+                dt.setMonth(dt.getMonth() + 1);
+            }
+
+            const year = dt.getFullYear();
+            const month = String(dt.getMonth() + 1).padStart(2, '0');
+            const day = String(dt.getDate()).padStart(2, '0');
+            const hours = String(dt.getHours()).padStart(2, '0');
+            const minutes = String(dt.getMinutes()).padStart(2, '0');
+            return {
+                date: `${year}-${month}-${day}`,
+                time: `${hours}:${minutes}`
+            };
+        }
+
         function toggleTask(id) {
             const task = tasks.find(t => t.id === id);
             if (task) {
-                task.completed = !task.completed;
+                const wasCompleted = task.completed;
+                task.completed = !wasCompleted;
+
+                if (!wasCompleted && task.recurring && task.recurring !== 'none') {
+                    const next = calculateNextDateAndTime(task.date || getTodayDateString(), task.time || '00:00', task.recurring);
+                    const nextTask = {
+                        id: Date.now().toString(),
+                        title: task.title,
+                        date: next.date,
+                        time: next.time,
+                        recurring: task.recurring,
+                        priority: task.priority,
+                        category1: task.category1 || task.category || '',
+                        category2: task.category2 || '',
+                        notes: task.notes || '',
+                        completed: false
+                    };
+                    tasks.push(nextTask);
+                }
                 saveData();
             }
         }
@@ -411,7 +546,9 @@
             const modal = document.getElementById('task-modal');
             const titleEl = document.getElementById('modal-title');
             document.getElementById('task-form').reset();
-            document.getElementById('task-datetime').value = getNowDateTimeLocalString();
+            document.getElementById('task-date').value = getTodayDateString();
+            document.getElementById('task-time').value = getCurrentTimeString();
+            document.getElementById('task-recurring').value = 'none';
 
             if (id) {
                 titleEl.innerText = '編輯待辦事項';
@@ -419,14 +556,20 @@
                 if (task) {
                     document.getElementById('task-id').value = task.id;
                     document.getElementById('task-title').value = task.title;
-                    document.getElementById('task-datetime').value = task.datetime || (task.date ? task.date + 'T12:00' : getNowDateTimeLocalString());
+                    document.getElementById('task-date').value = task.date || getTodayDateString();
+                    document.getElementById('task-time').value = task.time || getCurrentTimeString();
+                    document.getElementById('task-recurring').value = task.recurring || 'none';
                     document.getElementById('task-priority').value = task.priority;
-                    document.getElementById('task-category').value = task.category;
+                    document.getElementById('task-category1').value = task.category1 || task.category || (categories1[0] ? categories1[0].id : '');
+                    document.getElementById('task-category2').value = task.category2 || '';
                     document.getElementById('task-notes').value = task.notes || '';
                 }
             } else {
                 titleEl.innerText = '新增待辦事項';
                 document.getElementById('task-id').value = '';
+                if (categories1.length > 0) {
+                    document.getElementById('task-category1').value = categories1[0].id;
+                }
             }
             modal.classList.remove('hidden');
         }
@@ -439,29 +582,36 @@
             e.preventDefault();
             const id = document.getElementById('task-id').value;
             const title = document.getElementById('task-title').value;
-            const datetime = document.getElementById('task-datetime').value;
+            const date = document.getElementById('task-date').value;
+            const time = document.getElementById('task-time').value;
+            const recurring = document.getElementById('task-recurring').value;
             const priority = document.getElementById('task-priority').value;
-            const category = document.getElementById('task-category').value;
+            const category1 = document.getElementById('task-category1').value;
+            const category2 = document.getElementById('task-category2').value;
             const notes = document.getElementById('task-notes').value;
 
             if (id) {
                 const task = tasks.find(t => t.id === id);
                 if (task) {
                     task.title = title;
-                    task.datetime = datetime;
-                    task.date = datetime.split('T')[0];
+                    task.date = date;
+                    task.time = time;
+                    task.recurring = recurring;
                     task.priority = priority;
-                    task.category = category;
+                    task.category1 = category1;
+                    task.category2 = category2;
                     task.notes = notes;
                 }
             } else {
                 const newTask = {
                     id: Date.now().toString(),
                     title,
-                    datetime,
-                    date: datetime.split('T')[0],
+                    date,
+                    time,
+                    recurring,
                     priority,
-                    category,
+                    category1,
+                    category2,
                     notes,
                     completed: false
                 };
@@ -472,8 +622,26 @@
             closeTaskModal();
         }
 
-        function openCategoryModal() {
+        function switchCategoryManageTab(groupNum) {
+            currentManageCatGroup = groupNum;
+            const btn1 = document.getElementById('cat-tab-btn-1');
+            const btn2 = document.getElementById('cat-tab-btn-2');
+            const labelEl = document.getElementById('new-cat-label');
+
+            if (groupNum === 1) {
+                btn1.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition bg-white text-slate-900 shadow-sm";
+                btn2.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition text-slate-500 hover:text-slate-800";
+                labelEl.innerText = "新增至 分類標籤 1";
+            } else {
+                btn2.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition bg-white text-slate-900 shadow-sm";
+                btn1.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition text-slate-500 hover:text-slate-800";
+                labelEl.innerText = "新增至 分類標籤 2";
+            }
             renderCategoryList();
+        }
+
+        function openCategoryModal() {
+            switchCategoryManageTab(1);
             document.getElementById('category-modal').classList.remove('hidden');
         }
 
@@ -483,16 +651,25 @@
 
         function renderCategoryList() {
             const container = document.getElementById('category-list-container');
-            container.innerHTML = categories.map(c => `
+            const list = currentManageCatGroup === 1 ? categories1 : categories2;
+
+            if (list.length === 0) {
+                container.innerHTML = `<div class="p-4 text-center text-xs text-slate-400">目前尚無標籤，請於上方新增</div>`;
+                return;
+            }
+
+            container.innerHTML = list.map(c => `
                 <div class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
                     <div class="flex items-center space-x-2">
                         <span class="px-2.5 py-1 text-xs rounded-md font-medium ${c.color}">${c.name}</span>
                     </div>
-                    ${categories.length > 1 ? `
+                    ${(currentManageCatGroup === 1 && categories1.length <= 1) ? `
+                        <span class="text-xs text-slate-400">至少保留一個</span>
+                    ` : `
                         <button onclick="deleteCategory('${c.id}')" class="text-slate-400 hover:text-slate-900 p-1 transition" title="刪除標籤">
                             <i class="fa-solid fa-trash text-xs"></i>
                         </button>
-                    ` : '<span class="text-xs text-slate-400">預設</span>'}
+                    `}
                 </div>
             `).join('');
         }
@@ -504,7 +681,11 @@
             const id = 'cat_' + Date.now();
 
             if (name) {
-                categories.push({ id, name, color });
+                if (currentManageCatGroup === 1) {
+                    categories1.push({ id, name, color });
+                } else {
+                    categories2.push({ id, name, color });
+                }
                 document.getElementById('new-cat-name').value = '';
                 saveData();
                 renderCategoryList();
@@ -512,23 +693,36 @@
         }
 
         function deleteCategory(id) {
-            if (categories.length <= 1) {
-                alert('至少必須保留一個分類標籤！');
-                return;
-            }
-            if (confirm('刪除標籤後，原標籤的待辦事項將轉為預設分類。確定刪除嗎？')) {
-                categories = categories.filter(c => c.id !== id);
-                const fallbackCat = categories[0].id;
-                tasks.forEach(t => {
-                    if (t.category === id) t.category = fallbackCat;
-                });
-                saveData();
-                renderCategoryList();
+            if (currentManageCatGroup === 1) {
+                if (categories1.length <= 1) {
+                    alert('分類標籤 1 至少必須保留一個標籤！');
+                    return;
+                }
+                if (confirm('刪除標籤後，原本屬於此標籤 1 的待辦事項將轉為預設標籤。確定刪除嗎？')) {
+                    categories1 = categories1.filter(c => c.id !== id);
+                    const fallbackCat = categories1[0].id;
+                    tasks.forEach(t => {
+                        if (t.category1 === id || t.category === id) {
+                            t.category1 = fallbackCat;
+                        }
+                    });
+                    saveData();
+                    renderCategoryList();
+                }
+            } else {
+                if (confirm('刪除標籤後，原標籤 2 將自動清空。確定刪除嗎？')) {
+                    categories2 = categories2.filter(c => c.id !== id);
+                    tasks.forEach(t => {
+                        if (t.category2 === id) t.category2 = '';
+                    });
+                    saveData();
+                    renderCategoryList();
+                }
             }
         }
 
         function exportData() {
-            const data = { tasks, categories };
+            const data = { tasks, categories1, categories2 };
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -545,9 +739,10 @@
             reader.onload = function(e) {
                 try {
                     const data = JSON.parse(e.target.result);
-                    if (data.tasks && data.categories) {
+                    if (data.tasks) {
                         tasks = data.tasks;
-                        categories = data.categories;
+                        if (data.categories1) categories1 = data.categories1;
+                        if (data.categories2) categories2 = data.categories2;
                         saveData();
                         alert('資料匯入還原成功！');
                     } else {
