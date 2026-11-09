@@ -105,15 +105,24 @@
 
         <!-- Content Area -->
         <section class="lg:col-span-3 space-y-4">
-            <!-- Search & Filters Bar (整合在同一列) -->
+            <!-- Search & Filters Bar -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-                <div class="relative w-full">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </span>
-                    <input type="text" id="search-input" oninput="renderTasks()" placeholder="搜尋待辦事項..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition">
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <div class="relative flex-1">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input type="text" id="search-input" oninput="renderTasks()" placeholder="搜尋待辦事項..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition">
+                    </div>
+                    <!-- 排序選單 -->
+                    <div class="w-full sm:w-44">
+                        <select id="sort-by" onchange="renderTasks()" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900">
+                            <option value="time">依時間排序</option>
+                            <option value="priority">依優先程度排序</option>
+                        </select>
+                    </div>
                 </div>
-                <!-- 篩選器：分類 1、分類 2、優先程度 同一列 -->
+                <!-- 篩選器：分類 1、分類 2、優先程度同一列 -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 border-t border-slate-100">
                     <div>
                         <select id="filter-category1" onchange="renderTasks()" class="w-full bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900">
@@ -159,15 +168,40 @@
                     <input type="text" id="task-title" required placeholder="例如：每週週報彙整" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
                 </div>
 
-                <!-- 預計到期日與時間 -->
+                <!-- 預計到期日與 24 小時制整點 -->
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-600 uppercase mb-1">預計到期日 *</label>
                         <input type="date" id="task-date" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">預計時間 *</label>
-                        <input type="time" id="task-time" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">預計時間 (24時制) *</label>
+                        <select id="task-hour" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-slate-900">
+                            <option value="00:00">00 時</option>
+                            <option value="01:00">01 時</option>
+                            <option value="02:00">02 時</option>
+                            <option value="03:00">03 時</option>
+                            <option value="04:00">04 時</option>
+                            <option value="05:00">05 時</option>
+                            <option value="06:00">06 時</option>
+                            <option value="07:00">07 時</option>
+                            <option value="08:00">08 時</option>
+                            <option value="09:00">09 時</option>
+                            <option value="10:00" selected>10 時</option>
+                            <option value="11:00">11 時</option>
+                            <option value="12:00">12 時</option>
+                            <option value="13:00">13 時</option>
+                            <option value="14:00">14 時</option>
+                            <option value="15:00">15 時</option>
+                            <option value="16:00">16 時</option>
+                            <option value="17:00">17 時</option>
+                            <option value="18:00">18 時</option>
+                            <option value="19:00">19 時</option>
+                            <option value="20:00">20 時</option>
+                            <option value="21:00">21 時</option>
+                            <option value="22:00">22 時</option>
+                            <option value="23:00">23 時</option>
+                        </select>
                     </div>
                 </div>
 
@@ -281,11 +315,10 @@
             return `${year}-${month}-${day}`;
         }
 
-        function getCurrentTimeString() {
+        function getCurrentHourString() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            return `${hours}:${minutes}`;
+            return `${hours}:00`;
         }
 
         let categories1 = JSON.parse(localStorage.getItem('taskflow_categories1')) || JSON.parse(localStorage.getItem('taskflow_categories')) || [
@@ -367,6 +400,7 @@
         function renderTasks() {
             const listEl = document.getElementById('task-list');
             const searchVal = document.getElementById('search-input').value.toLowerCase();
+            const sortBy = document.getElementById('sort-by').value;
             const cat1Filter = document.getElementById('filter-category1').value;
             const cat2Filter = document.getElementById('filter-category2').value;
             const prioFilter = document.getElementById('filter-priority').value;
@@ -410,12 +444,24 @@
                 return true;
             });
 
+            // 排序邏輯
             filtered.sort((a, b) => {
-                const dtA = (a.date || '') + ' ' + (a.time || '00:00');
-                const dtB = (b.date || '') + ' ' + (b.time || '00:00');
-                if (dtA !== dtB) return dtA.localeCompare(dtB);
-                const weights = { high: 3, medium: 2, low: 1 };
-                return weights[b.priority] - weights[a.priority];
+                if (sortBy === 'priority') {
+                    const weights = { high: 3, medium: 2, low: 1 };
+                    const pDiff = weights[b.priority] - weights[a.priority];
+                    if (pDiff !== 0) return pDiff;
+                    // 優先程度相同時，次要依時間排序
+                    const dtA = (a.date || '') + ' ' + (a.time || '00:00');
+                    const dtB = (b.date || '') + ' ' + (b.time || '00:00');
+                    return dtA.localeCompare(dtB);
+                } else {
+                    // 預設依時間排序
+                    const dtA = (a.date || '') + ' ' + (a.time || '00:00');
+                    const dtB = (b.date || '') + ' ' + (b.time || '00:00');
+                    if (dtA !== dtB) return dtA.localeCompare(dtB);
+                    const weights = { high: 3, medium: 2, low: 1 };
+                    return weights[b.priority] - weights[a.priority];
+                }
             });
 
             if (filtered.length === 0) {
@@ -428,7 +474,7 @@
                 return;
             }
 
-            const currentFullStr = getTodayDateString() + ' ' + getCurrentTimeString();
+            const currentFullStr = getTodayDateString() + ' ' + getCurrentHourString();
 
             listEl.innerHTML = filtered.map(t => {
                 const c1Id = t.category1 || t.category || '';
@@ -450,8 +496,9 @@
                     none: ''
                 }[t.recurring || 'none'];
 
-                const dtDisplay = `${t.date || todayStr} ${t.time || '00:00'}`;
-                const isOverdue = !t.completed && (dtDisplay < currentFullStr);
+                const timeDisplay = t.time ? t.time.substring(0, 2) + ' 時' : '00 時';
+                const dtDisplay = `${t.date || todayStr} ${timeDisplay}`;
+                const isOverdue = !t.completed && (`${t.date || todayStr} ${t.time || '00:00'}` < currentFullStr);
 
                 return `
                     <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-start justify-between gap-4 hover:border-slate-400 transition">
@@ -502,10 +549,9 @@
             const month = String(dt.getMonth() + 1).padStart(2, '0');
             const day = String(dt.getDate()).padStart(2, '0');
             const hours = String(dt.getHours()).padStart(2, '0');
-            const minutes = String(dt.getMinutes()).padStart(2, '0');
             return {
                 date: `${year}-${month}-${day}`,
-                time: `${hours}:${minutes}`
+                time: `${hours}:00`
             };
         }
 
@@ -516,7 +562,7 @@
                 task.completed = !wasCompleted;
 
                 if (!wasCompleted && task.recurring && task.recurring !== 'none') {
-                    const next = calculateNextDateAndTime(task.date || getTodayDateString(), task.time || '00:00', task.recurring);
+                    const next = calculateNextDateAndTime(task.date || getTodayDateString(), task.time || '10:00', task.recurring);
                     const nextTask = {
                         id: Date.now().toString(),
                         title: task.title,
@@ -547,7 +593,7 @@
             const titleEl = document.getElementById('modal-title');
             document.getElementById('task-form').reset();
             document.getElementById('task-date').value = getTodayDateString();
-            document.getElementById('task-time').value = getCurrentTimeString();
+            document.getElementById('task-hour').value = '10:00';
             document.getElementById('task-recurring').value = 'none';
 
             if (id) {
@@ -557,7 +603,7 @@
                     document.getElementById('task-id').value = task.id;
                     document.getElementById('task-title').value = task.title;
                     document.getElementById('task-date').value = task.date || getTodayDateString();
-                    document.getElementById('task-time').value = task.time || getCurrentTimeString();
+                    document.getElementById('task-hour').value = task.time ? task.time.substring(0, 2) + ':00' : '10:00';
                     document.getElementById('task-recurring').value = task.recurring || 'none';
                     document.getElementById('task-priority').value = task.priority;
                     document.getElementById('task-category1').value = task.category1 || task.category || (categories1[0] ? categories1[0].id : '');
@@ -583,7 +629,7 @@
             const id = document.getElementById('task-id').value;
             const title = document.getElementById('task-title').value;
             const date = document.getElementById('task-date').value;
-            const time = document.getElementById('task-time').value;
+            const time = document.getElementById('task-hour').value;
             const recurring = document.getElementById('task-recurring').value;
             const priority = document.getElementById('task-priority').value;
             const category1 = document.getElementById('task-category1').value;
